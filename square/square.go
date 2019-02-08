@@ -1,7 +1,8 @@
-package thumbnail
+package square
 
 import (
 	"fmt"
+	"image/color"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -10,13 +11,13 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-func CreateThumbnail(input string, output string, postfix string, width int, height int) error {
+func CreateSquare(input string, output string, postfix string, size int) error {
 	if fi, err := os.Stat(input); err != nil {
 		return err
 	} else if fi.Mode().IsDir() {
 		if files, err := ioutil.ReadDir(input); err == nil {
 			for _, f := range files {
-				if err := CreateThumbnail(filepath.Join(input, f.Name()), "", postfix, width, height); err != nil {
+				if err := CreateSquare(filepath.Join(input, f.Name()), "", postfix, size); err != nil {
 					return err
 				}
 			}
@@ -30,7 +31,20 @@ func CreateThumbnail(input string, output string, postfix string, width int, hei
 	if err != nil {
 		return fmt.Errorf("Could not open file: %s (%s)", input, err)
 	}
-	thumbnail := imaging.Resize(src, width, height, imaging.Lanczos)
+	if size > 0 {
+		src = imaging.Resize(src, 0, size, imaging.Lanczos)
+	}
+	imgSize := src.Bounds().Size()
+	if imgSize.X == imgSize.Y {
+		return nil
+	}
+	maxSize := imgSize.X
+	if imgSize.Y > maxSize {
+		maxSize = imgSize.Y
+	}
+	fillColor := color.NRGBA{0xff, 0xff, 0xff, 0xff}
+	newImage := imaging.New(maxSize, maxSize, fillColor)
+	processed := imaging.OverlayCenter(newImage, src, 1.0)
 
 	dest := output
 	if dest == "" {
@@ -41,7 +55,7 @@ func CreateThumbnail(input string, output string, postfix string, width int, hei
 		}
 	}
 
-	if err := imaging.Save(thumbnail, dest); err != nil {
+	if err := imaging.Save(processed, dest); err != nil {
 		return fmt.Errorf("Could not save file: %s (%s)", dest, err)
 	} else {
 		return nil
