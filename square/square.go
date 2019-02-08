@@ -35,9 +35,6 @@ func CreateSquare(input string, output string, postfix string, size int) error {
 		src = imaging.Resize(src, 0, size, imaging.Lanczos)
 	}
 	imgSize := src.Bounds().Size()
-	if imgSize.X == imgSize.Y {
-		return nil
-	}
 	maxSize := imgSize.X
 	if imgSize.Y > maxSize {
 		maxSize = imgSize.Y
