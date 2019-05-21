@@ -66,7 +66,7 @@ func main() {
 		},
 		{
 			Name:  "contain",
-			Usage: "Contain image within image",
+			Usage: "Contain image within given square",
 
 			Action: func(ctx *cli.Context) error {
 				return contain.CreateContain(ctx.GlobalString("input"), ctx.GlobalString("output"), ctx.String("postfix"), ctx.Int("size"))
