@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/codenaut/darkroom/contain"
 	"github.com/codenaut/darkroom/square"
 	"github.com/codenaut/darkroom/thumbnail"
 
@@ -60,6 +61,26 @@ func main() {
 					Name:  "size",
 					Value: 0,
 					Usage: "Output size",
+				},
+			},
+		},
+		{
+			Name:  "contain",
+			Usage: "Contain image within image",
+
+			Action: func(ctx *cli.Context) error {
+				return contain.CreateContain(ctx.GlobalString("input"), ctx.GlobalString("output"), ctx.String("postfix"), ctx.Int("size"))
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "postfix, p",
+					Value: "_resized",
+					Usage: "Output postfix",
+				},
+				cli.IntFlag{
+					Name:  "size",
+					Value: 0,
+					Usage: "Max width/height",
 				},
 			},
 		},
