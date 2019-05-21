@@ -5,6 +5,7 @@ import (
 
 	"github.com/codenaut/darkroom/contain"
 	"github.com/codenaut/darkroom/square"
+	"github.com/codenaut/darkroom/square_crop"
 	"github.com/codenaut/darkroom/thumbnail"
 
 	"github.com/urfave/cli"
@@ -75,6 +76,26 @@ func main() {
 				cli.StringFlag{
 					Name:  "postfix, p",
 					Value: "_resized",
+					Usage: "Output postfix",
+				},
+				cli.IntFlag{
+					Name:  "size",
+					Value: 0,
+					Usage: "Max width/height",
+				},
+			},
+		},
+		{
+			Name:  "square_crop",
+			Usage: "Resize and crop image to fit within square",
+
+			Action: func(ctx *cli.Context) error {
+				return square_crop.CreateSquareCrop(ctx.GlobalString("input"), ctx.GlobalString("output"), ctx.String("postfix"), ctx.Int("size"))
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "postfix, p",
+					Value: "_square",
 					Usage: "Output postfix",
 				},
 				cli.IntFlag{
